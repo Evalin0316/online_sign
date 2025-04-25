@@ -129,9 +129,13 @@ const SignList = () => {
             <li 
               key={index} 
               className={`m-2 flex justify-center relative cursor-pointer ${item.isSigned ? 'fileEnvelop_isSigned' : 'fileEnvelop'}`}
-              onClick={() => setSelected(selected === index ? -1 : index)}
             >
-            <div className="fileEnvelop_option absolute right-0 bottom-0 z-[55] h-12">
+            <div className="fileEnvelop_option absolute right-0 bottom-0 z-[55] h-12"
+              onClick={(e) => {
+                e.stopPropagation();
+                return setSelected(selected === index ? -1 : index)
+              }}
+            >
               <img src={iconMoreOptions} alt="More options" />
             </div>
             <div className="absolute top-10 z-[50] text-[10px] w-32 flex justify-center pr-5 flex-wrap">{item.signTitle}</div>

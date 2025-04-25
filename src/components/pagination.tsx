@@ -1,12 +1,18 @@
 import React, { useState, useMemo } from 'react';
 
-const Pagination = ({ fileListLength, page, setPage }) => {
+interface PaginationProps {
+  fileListLength: number;
+  page: number;
+  setPage: (page: number) => void;
+}
+
+const Pagination = ({ fileListLength, page, setPage }: PaginationProps) => {
   const options = useMemo(() => {
     const totalPage = Math.ceil(fileListLength / 10);
     return Array.from({ length: totalPage }, (_, index) => index + 1);
   }, [ fileListLength ]);
 
-  const handleChangePage = (status) => {
+  const handleChangePage = (status: 'pre' | 'next') => {
     if (status === 'pre' && page > 1) {
       setPage(page - 1);
     } else if (status === 'next' && page < options.length) {
