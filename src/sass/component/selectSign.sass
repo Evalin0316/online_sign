@@ -1,0 +1,29 @@
+.draw_modal
+  z-index: 99
+  height: 120vh
+  background: rgba(140, 93, 25, 0.3)
+
+  .card-inner
+    left: 50%
+    top: 40%
+    transform: translate(-50%, -50%)
+    color: #8C5D19
+
+    .bg
+      background: #EFE3D4
+
+      .selected-modal
+        height: 18rem
+
+      .uploadImage
+        background-image: url("/src/assets/images/uploadSign.png")
+        height: 40px
+        width: 100%
+        background-repeat: no-repeat
+        cursor: pointer
+
+  .pop-container-choose
+    max-width: 343px
+
+    @media (max-width: 768px)
+      max-width: 343px

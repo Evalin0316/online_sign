@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { loadFileList, deleteFile } from '../actions/signListActions';
 import { useNavigate } from 'react-router-dom';
 import Pagination from '../components/pagination';
+import Header from '../components/header';
+import { AppContext } from '../provider';
 
 import clearButton from '../assets/images/icon_Close_n.png';
 import iconDownload from '../assets/images/icon_download_n.svg';
@@ -20,7 +22,6 @@ interface FileItem {
   // Add other properties as needed
 }
 
-
 const SignList = () => {
   const navigate = useNavigate();
   const [ keyword, setKeyword ] = useState('');
@@ -30,6 +31,11 @@ const SignList = () => {
   const [ totalFiles, setTotalFiles ] = useState(1);
   const [ selected, setSelected ] = useState(-1);
   const [ page, setPage ] = useState(1);
+  const appContext = useContext(AppContext) as {
+    pageStatus: string;
+    setPageStatus: (status: string) => void;
+  };
+  const { pageStatus, setPageStatus } = appContext;
 
   const searchClear = () => setKeyword('');
   
@@ -40,6 +46,10 @@ const SignList = () => {
        setPage(1);
       }
     });
+  };
+
+  const getFileDetails = (id: string) => {
+    navigate(`/upload/${id}`);
   };
 
   useEffect(() => {
@@ -68,10 +78,14 @@ const SignList = () => {
     setFilterList(filteredList);
   }, [ keyword, fileList ]);
 
+  useEffect(() => {
+    setPageStatus('signList');
+  }, []);
+
   return (
   <>
     <div className="container_outer">
-    {/* <Header /> */}
+    <Header pageStatus={pageStatus} />
       <div className="container_home p-3">
         <div className="flex justify-between search_line items-center">
           {/* search input */}
@@ -113,9 +127,9 @@ const SignList = () => {
             </div>
           </div>
           {/* upload_file */}
-          <div className="upload_file z-0">
+          <div className="upload_file z-0 cursor-pointer">
           <img
-            className="upload_img" 
+            className="upload_img"
             src={iconUpload} 
             onClick={() => navigate('/upload')}
             alt="Upload" 
@@ -129,6 +143,7 @@ const SignList = () => {
             <li 
               key={index} 
               className={`m-2 flex justify-center relative cursor-pointer ${item.isSigned ? 'fileEnvelop_isSigned' : 'fileEnvelop'}`}
+              onClick={() => getFileDetails(item._id)}
             >
             <div className="fileEnvelop_option absolute right-0 bottom-0 z-[55] h-12"
               onClick={(e) => {
@@ -142,13 +157,22 @@ const SignList = () => {
             {selected === index && (
               <div className="absolute bottom-0 left-2 bg-white w-3/5 rounded">
                 <ul>
-                  <li className="text-[#BE8E55] flex cursor-pointer hover:bg-[#EFE3D4] p-1">
+                  <li
+                    className="text-[#BE8E55] flex cursor-pointer hover:bg-[#EFE3D4] p-1"
+                    onClick={(e) => e.stopPropagation()}
+                    >
                     <a className="flex" target="_blank" href={item.fileLocation}>
                       <img className="mx-2" src={iconDownload} alt="Download" />
                       <span className="hover:text-[#BE8E55]">下載檔案</span>
                     </a>
                   </li>
-                  <li className="text-[#BE8E55] flex cursor-pointer hover:bg-[#EFE3D4] p-1" onClick={() => deleteFileHandler(item._id, item.fileName)}>
+                  <li
+                    className="text-[#BE8E55] flex cursor-pointer hover:bg-[#EFE3D4] p-1" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteFileHandler(item._id, item.fileName);
+                    }}
+                    >
                     <img className="mx-2" src={iconDelete} alt="Delete" />
                     <span className="hover:text-[#BE8E55]">取消簽署</span>
                   </li>
