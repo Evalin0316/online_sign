@@ -13,7 +13,6 @@ import { uploadFile, uploadSignInfo, uploadFileInfo } from "../actions/uploadFil
 import { AppContext } from "../provider";
 
 const AddSign = () => {
-  const canvasRef = useRef<StaticCanvas | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [ showTextModal, setShowTextModal ] = useState(false);
   const [ showSignImagesList, setShowSignImagesList ] = useState(false);
@@ -24,9 +23,9 @@ const AddSign = () => {
   const [signTitle, setSignTitle] = useState("");
   const [isFileChange, setIsFileChange] = useState(false);
   const [isFileNameChange, setIsFileNameChange] = useState(false);
-  const navigate = useNavigate();
-  let canvas: any = '';
+  let canvas = useRef<fabric.Canvas | null>(null);
 
+  const navigate = useNavigate();
   const appContext = useContext(AppContext) as {
     pageStatus: string;
     fileId: string | null;
@@ -35,30 +34,12 @@ const AddSign = () => {
   };
   const { pageStatus, fileId, fileInfo, setPageStatus } = appContext;
   
-
   useEffect(() => {
-    // 若已存在舊的 canvas 實例，釋放資源
-    // if (canvasRef.current) {
-    //   canvasRef.current.dispose();
-    // }
-
-    // const canvas = new StaticCanvas("canvas");
-    // canvasRef.current = canvas;
-
-    // const helloText = new FabricText("Hello world!", {
-    //   top: 50,
-    //   left: 50,
-    //   fontSize: 24,
-    // });
-    // canvas.add(helloText);
-    // canvas.centerObject(helloText);
-
     renderPDF(fileInfo);
     setPageStatus("addSign");
 
-    // 清除時 dispose
     return () => {
-      canvas.dispose();
+      canvas.current.dispose();
     };
   }, []);
 
@@ -99,7 +80,7 @@ const AddSign = () => {
         viewport
       }
       const renderTask = pdfPage.render(renderContext)
-      // 回傳做好的PAF canvas
+      // 回傳做好的PDF canvas
       return renderTask.promise.then(() => canvas)
     }
 
@@ -113,70 +94,55 @@ const AddSign = () => {
       })
     }
 
-    canvas = new fabric.Canvas('canvas')
+    canvas.current = new fabric.Canvas('canvas');
     const Init = async (index: number) => {
-      canvas.requestRenderAll();
+      canvas.current?.requestRenderAll();
       const pdfData = await printPDF(file, index);
       const pdfImage = await pdfToImage(pdfData);
       // 透過比例設定canvas 尺寸
-      canvas.setWidth(pdfImage.width / window.devicePixelRatio)
-      canvas.setHeight(pdfImage.height / window.devicePixelRatio)
-      // canvas.setWidth(pdfImage.width)
-      // canvas.setHeight(pdfImage.height)
+      canvas.current?.setWidth((pdfImage.width ?? 0) / window.devicePixelRatio);
+      canvas.current?.setHeight((pdfImage.height ?? 0) / window.devicePixelRatio);
+
 
       // 將 PDF 畫面設定為背景
-      canvas.setBackgroundImage(pdfImage, canvas.renderAll.bind(canvas))
-    }
-
+      canvas.current?.setBackgroundImage(pdfImage, canvas.current.renderAll.bind(canvas.current));
+    };
+      
     Init(1);
-
-    // /*------------加入簽名-------------*/
-    // const sign = document.querySelector('.signBtn')
-    // sign.addEventListener('click', () => {
-    // bus.emit('addCanvas',canvas);
-    // showSignModal.value = true;
-    // })
-
-    // /*------------加入日期-------------*/
-    // const dateBtn = document.querySelector('.dateBtn')
-    // let day = new Date();
-    // const today = day.getFullYear() + '/' + (day.getMonth() +1) + '/' + day.getDate();
-
-    // dateBtn.addEventListener('click', () => {
-    //   var text = new fabric.Text(today, (image) => {
-    //     image.top = 10
-    //     image.left = 10
-    //     image.scaleX = 0.5
-    //     image.scaleY = 0.5
-    //   })
-    //   canvas.add(text)
-    // })
+  };
 
     // /*------------開啟新增文字dialog-------------*/
     // const textBtn = document.querySelector('.textBtn')
     // textBtn.addEventListener('click', () => {
     //     showText.value = true;
     // })
-  };
 
   // add sign from images inventory
   const addSignInventory = () => {
-    console.log("addSignInventory")
     setShowSignImagesList(true);
-  }
+  };
 
   // add time stamp
   const addTimeStamp = () => {
-    console.log("addTimeStamp")
     const day = new Date();
-    const today = day.getFullYear() + '/' + (day.getMonth() +1) + '/' + day.getDate();
+    const today = day.getFullYear() + '/' + (day.getMonth() + 1) + '/' + day.getDate();
     const text = new fabric.Text(today, {
       top: 10,
       left: 10,
       scaleX: 0.5,
       scaleY: 0.5
     });
-    canvas.add(text);
+    canvas.current.add(text);
+  };
+
+  const addSignFromInventory = (url: string) => {
+    fabric.Image.fromURL(url, (image) => {
+      image.top = 100;
+      image.left = 100;
+      image.scaleX = 0.5;
+      image.scaleY = 0.5;
+      canvas.current.add(image);
+    });
   }
 
   return (
@@ -189,7 +155,7 @@ const AddSign = () => {
       />
       <div className="container_sign">
         <div className="flex justify-center pt-10 pb-10">
-          <ProgressLine arrStatus={['alreadyDo','nowDo','willDo']} />
+          <ProgressLine arrStatus={['completed','doing','undone']} />
         </div>
         <div className="flex justify-center pt-10 pb-10">
           <div className="container_pdf h-screen relative overflow-x-hidden">
@@ -206,10 +172,11 @@ const AddSign = () => {
             </div>
             <input type="file" className="form-control hidden pdf_upload" ref={fileInputRef} />
             {/* <AddTextModal showModal={showTextModal} onClose={() => setShowTextModal(false)} /> */}
-            { showSignImagesList && (
+            {showSignImagesList && (
               <SelectSign
                 setShowSignImagesList={setShowSignImagesList}
-            />
+                addSignFromInventory={addSignFromInventory}
+              />
             )}
             {/* <AlertMessage showAlert={showAlert} textContent={alertText} uploadStatus={uploadStatus} /> */}
           </div>

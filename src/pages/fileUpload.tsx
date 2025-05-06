@@ -13,7 +13,7 @@ const FileUpload = () => {
 
   const [ filename, setFilename ] = useState("");
   // const [ isFileReview, setIsFileReview ] = useState(false);
-  const [ arrStatus, setArrStatus ] = useState(["nowDo", "willDo", "willDo"]);
+  const [ arrStatus, setArrStatus ] = useState(["doing", "undone", "undone"]);
   const [ step, setStep ] = useState(1);
   const [ isFileExist, setIsFileExist ] = useState(false);
   const [ showConfirmModal, setShowConfirmModal ] = useState(false);
@@ -95,7 +95,7 @@ const FileUpload = () => {
   const nextStep = () => {
     if (isFileExist) {
       // setIsFileReview(true);
-      setArrStatus(["alreadyDo", "nowDo", "willDo"]);
+      setArrStatus(["completed", "doing", "undone"]);
       navigate('/addSign');
       // setShowConfirmModal(true);
     } else {
@@ -104,7 +104,7 @@ const FileUpload = () => {
   };
 
   const prevPage = () => {
-    setArrStatus(["nowDo", "willDo", "willDo"]);
+    setArrStatus(["doing", "undone", "undone"]);
     // setIsFileReview(false);
     setShowConfirmModal(false);
     if (fileElement.current) {
@@ -152,7 +152,7 @@ const FileUpload = () => {
       />
       <div className="container_sign">
         <div className="flex justify-center pt-10 pb-10">
-          <ProgressLine arrStatus={["nowDo", "willDo", "willDo"]} />
+          <ProgressLine arrStatus={["doing", "undone", "undone"]} />
         </div>
         <div className="flex justify-center">
           <div

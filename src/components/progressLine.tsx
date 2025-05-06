@@ -3,7 +3,11 @@ import finish from "../assets/images/finish.svg";
 import sign from "../assets/images/sign.svg";
 import upload from "../assets/images/upload.svg";
 
-const Progress = ({ arrStatus = [] }) => {
+interface ProgressLineProps {
+  arrStatus: string[];
+}
+
+const Progress = ({ arrStatus = [] }: ProgressLineProps) => {
   const progressData = [
     {
       img: upload,
@@ -29,11 +33,11 @@ const Progress = ({ arrStatus = [] }) => {
           <li
             key={i}
             className={`progress__content__item ${
-              item.upload_status === "alreadyDo"
-                ? "progress__content__item--alreadyDo"
-                : item.upload_status === "nowDo"
-                ? "progress__content__item--nowDo"
-                : "progress__content__item--willDo"
+              item.upload_status === "completed"
+                ? "progress__content__item--completed"
+                : item.upload_status === "doing"
+                ? "progress__content__item--doing"
+                : "progress__content__item--undone"
             }`}
           >
             <img src={item.img} alt="progress" />

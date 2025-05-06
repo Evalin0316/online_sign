@@ -32,18 +32,18 @@ $main_color: #be8e55;
         @media (max-width: 540px)
           width: 40px
 
-      &--alreadyDo
+      &--completed
         @apply border
         opacity: 1
         &::before
           opacity: 1
 
-      &--nowDo
+      &--doing
         @apply border-dashed
         &::before
           opacity: 0.5
 
-      &--willDo
+      &--undone
         @apply border-dashed
         opacity: 0.5
         &::before
