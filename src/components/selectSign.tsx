@@ -3,6 +3,7 @@ import { fabric } from "fabric";
 // import CanvasDraw from './CanvasDraw';
 // import bus from '../srcipt/bus';
 import { loadImages, deleteImage, uploadImage } from '../actions/signImageAction';
+import ReactSketchCanvas from './reactSketchCanvas'
 
 import iconSquare from '../assets/images/icon_Close_Square_n.png';
 import iconAddNewSign from '../assets/images/icon_add_new_sign_n.svg';
@@ -21,9 +22,9 @@ interface SignList {
 
 const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignProps) => {
   const [ signList, setSignList ] = useState<SignList[]>([]);
+  const [ showAddSignModal, setShowAddSignModal ] = useState(false);
   const [isSignSelf, setIsSignSelf] = useState(true);
   const [getUrl, setGetUrl] = useState('');
-  const [isSelectMode, setIsSelectMode] = useState(true);
   const [getStroke, setGetStroke] = useState('');
   const fileElement = useRef<HTMLInputElement>(null);
 
@@ -105,11 +106,13 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
     }
   };
 
-  // if (!showSignModal) return null;
+  const addNewSign = () => {
+    setShowAddSignModal(true);
+  };
 
   return (
     <div className="draw_modal w-full left-0 top-0 fixed">
-      {signList.length > 0 && isSelectMode && (
+      {signList.length > 0 && (
         <div className="card-inner absolute text-xl pop-container-choose w-full z-50">
           <div className="relative mt-3" onClick={() => setShowSignImagesList(false)}>
             <img
@@ -149,10 +152,9 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
               </div>
               <label
                 className="flex justify-center proj-text-primary mt-4 font-bold text-lg whitespace-nowrap"
-                onClick={() => setIsSelectMode(false)}
               >
                 <img src={iconAddNewSign} alt="add" />
-                <span className="text-[#8C5D19] font-[700] text-[14px] ml-1">建立簽名</span>
+                <span className="text-[#8C5D19] font-[700] text-[14px] ml-1"  onClick={() => addNewSign()}>建立簽名</span>
               </label>
               <label className="flex justify-center proj-text-primary mt-4 font-bold text-lg whitespace-nowrap">
                 <img src={iconAddNewSignHover} alt="upload" />
@@ -169,7 +171,7 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
           </div>
         </div>
       )}
-      {signList.length === 0 && isSelectMode && (
+      {signList.length === 0 && (
         <div className="card-inner absolute text-xl pop-container-choose w-full z-50">
         <div className="relative mt-3" onClick={() => setShowSignImagesList(false)}>
           <img
@@ -186,10 +188,12 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
             <div className="text-sm">請創建新的簽名檔，可上傳圖片或線上簽名</div>
             <label
               className="flex justify-center proj-text-primary mt-4 whitespace-nowrap bg-white rounded"
-              onClick={() => setIsSelectMode(false)}
             >
               <img src={iconAddNewSign} alt="add" />
-              <span className="text-[#8C5D19] font-[700] text-[14px] ml-1">建立簽名</span>
+              <span 
+                className="text-[#8C5D19] font-[700] text-[14px] ml-1"
+                onClick={() => addNewSign()}
+              >建立簽名</span>
             </label>
             <label className="flex justify-center mt-4 bg-white rounded">
               <img src={iconAddNewSignHover} alt="upload" />
@@ -205,27 +209,11 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
           </div>
         </div>
       )}
-      {/* {!isSelectMode && (
-        <div className="card-inner absolute text-xl w-[500px] z-50 pop-container max-[768px]:w-[343px]">
-          <div className="bg rounded-3xl overflow-hidden shadow-lg w-full">
-            <div className="relative mt-3" onClick={() => setIsSelectMode(true)}>
-              <img
-                className="absolute right-0 top-0 mr-4"
-                src="../assets/images/icon_Close_Square_n.png"
-                alt="close"
-              />
-            </div>
-            <div className="index_Sign flex flex-col items-center w-full py-4 px-2">
-              <CanvasDraw
-                isSignSelf={isSignSelf}
-                closeWarning={closeWarning}
-                getStroke={setGetStroke}
-                sign={getSign}
-              />
-            </div>
-          </div>
-        </div>
-      )} */}
+      {showAddSignModal && (
+        <ReactSketchCanvas
+          setShowAddSignModal={setShowAddSignModal}
+        />
+      )}
     </div>
   );
 };
