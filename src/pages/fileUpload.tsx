@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
 import Header from "../components/header";
 import ProgressLine from "../components/progressLine";
-import SaveConfirm from "../components/SaveConfirm";
+import SaveConfirm from "../components/saveConfirmModal";
 // import bus from "../script/bus";
 import { getFileDetail, getSingleFile } from "../actions/uploadFileActions";
 import { AppContext } from '../provider';

@@ -200,7 +200,11 @@ const AddSign = () => {
                 addSignFromInventory={addSignFromInventory}
               />
             )}
-            {showSaveConfirm && <SaveConfirm setShowSaveConfirm={setShowSaveConfirm} />}
+            {showSaveConfirm && (
+              <SaveConfirm 
+                setShowSaveConfirm={setShowSaveConfirm}
+              />
+            )}
             {/* <AlertMessage showAlert={showAlert} textContent={alertText} uploadStatus={uploadStatus} /> */}
           </div>
         </div>

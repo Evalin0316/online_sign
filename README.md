@@ -1,9 +1,5 @@
 # sign-react-ts
 
-## Overview
-
-`sign-react-ts` is a React TypeScript project designed for building modern web applications. It leverages powerful tools like Vite, TailwindCSS, and TypeScript to ensure a fast and efficient development experience.
-
 ## Features
 
 - **React 18**: A modern library for building user interfaces.
@@ -18,7 +14,7 @@
 1. Clone the repository:
   ```bash
   git clone https://github.com/your-repo/sign-react-ts.git
-  cd sign-react-ts
+  cd online_sign
   ```
 
 2. Install dependencies:
@@ -68,10 +64,6 @@
 - `@types/react`: ^18.0.37
 - `@types/react-dom`: ^18.0.11
 - `@types/fabric`: ^5.3.10
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgements
 
