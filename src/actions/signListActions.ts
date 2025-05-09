@@ -2,7 +2,7 @@ import axios from "axios";
 
 const url = 'https://auto-signature-app-v7-4.fly.dev';
 
-export const loadSingleFile = (durl) =>{
+export const loadSingleFile = (durl) => {
   return axios.get(`${durl}`,{responseType:'blob'})
 }
 

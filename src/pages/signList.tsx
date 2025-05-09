@@ -59,6 +59,7 @@ const SignList = () => {
     });
   }, [ page ]);
 
+  // filter
   useEffect(() => {
     const checkLength = filterType.length === 1
 
@@ -71,6 +72,7 @@ const SignList = () => {
     }
   }, [ filterType, fileList ]);
 
+  // search bar 
   useEffect(() => {
     const filteredList = fileList.filter((item: { signTitle: string }) => 
       item.signTitle.toLowerCase().includes(keyword.toLowerCase())
@@ -113,27 +115,29 @@ const SignList = () => {
             <div className="search_type bg-white flex w-9/12 ml-4 rounded-lg text-[#BE8E55] h-12  max-[768px]:hidden">
               <label className="m-3 flex justify-center items-center">
                 <input className="selector" type="checkbox" onChange={(e) => {
-                  if (e.target.checked) setFilterType((pre)=> [...pre, 'undone']);
-                  else setFilterType([]);
-                }} />未完成
+                    if (e.target.checked) setFilterType((pre) => [...pre, 'undone']);
+                    else setFilterType((pre) => pre.filter((type) => type !== 'undone'));
+                }} /> 
+                未完成
               </label>
               <label className="m-3 flex justify-center items-center">
                 <input className="selector" type="checkbox" value='complete' onChange={(e) => {
                   if (e.target.checked) setFilterType((pre)=> [...pre, 'done']);
-                  else setFilterType([]);
-                }} />已完成
+                  else setFilterType((pre) => pre.filter((type) => type !== 'done'));
+                }} /> 
+                已完成
               </label>
               <label className="m-3">共{fileList?.length}筆</label>
             </div>
           </div>
           {/* upload_file */}
           <div className="upload_file z-0 cursor-pointer">
-          <img
-            className="upload_img"
-            src={iconUpload} 
-            onClick={() => navigate('/upload')}
-            alt="Upload" 
-          />
+            <img
+              className="upload_img"
+              src={iconUpload} 
+              onClick={() => navigate('/upload')}
+              alt="Upload" 
+            />
           </div>
         </div>
         {/* file_list */}
@@ -183,14 +187,17 @@ const SignList = () => {
           ))
         }
         </ul>
+        {!fileList.length && <div className='flex justify-center text-[#BE8E55]'>還沒有檔案呦...</div>}
         {/* pagination */}
-        <div className="flex justify-center item-center">
-          <Pagination
-            fileListLength={totalFiles} 
-            page={page}
-            setPage={setPage}
-          />
-        </div>
+        {!!fileList.length &&
+          <div className="flex justify-center item-center">
+            <Pagination
+              fileListLength={totalFiles} 
+              page={page}
+              setPage={setPage}
+            />
+          </div>
+        }
       </div>
     </div>
   </>

@@ -52,24 +52,19 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
       });
   };
 
-  const deleteImageBtn = (id: string, hash: string, url: string) => {
+  const deleteImageBtn = (id: string, url: string) => {
     const getUrl = url.split('/');
     const imageName = getUrl[3];
-    deleteImage(id, hash, imageName)
+    deleteImage(id, imageName)
       .then((res) => {
         if (res.data.status) {
           alert(res.data.data);
-          loadImageList();
+          setSignList(pre => pre.filter((image) => image.id !== id));
         }
       })
       .catch((err) => {
         alert(err.message);
     });
-  };
-
-  const getSign = () => {
-    setIsSelectMode(true);
-    init();
   };
 
   const getBase64FromUrl = (imgUrl: string, id: string, hash: string, newSignList: SignList[]) => {
@@ -90,21 +85,34 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
   };
 
   const uploadImageBtn = () => {
-    const formData = new FormData() ?? '';
     const fileInput = fileElement.current?.files?.[0];
-    formData.append('image', fileInput ?? '');
-    if (fileInput?.size) {
-      uploadImage(formData).then(
-        (res) => {
-          if (res.data.status) {
+  
+    if (!fileInput) {
+      alert('請選擇一張圖片');
+      return;
+    }
+  
+    if (fileInput.size <= 0) {
+      alert('檔案大小為 0，請重新選擇圖片');
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append('image', fileInput);
+  
+    uploadImage(formData)
+      .then((res) => {
+        if (res.data.status) {
           alert(res.data.data);
+        } else {
+          alert('圖片上傳失敗');
         }
       })
       .catch((err) => {
-        alert(err.message);
+        alert(`圖片上傳錯誤：${err.response?.data?.message || err.message}`);
       });
-    }
   };
+
 
   const addNewSign = () => {
     setShowAddSignModal(true);
@@ -140,7 +148,7 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
                         referrerPolicy="no-referrer"
                       />
                     </div>
-                    <span onClick={() => deleteImageBtn(item.id, item.hash, item.imageUrl)}>
+                    <span onClick={() => deleteImageBtn(item.id, item.imageUrl)}>
                       <img
                         className="mr-4 mt-2"
                         src={iconSquare}
@@ -185,7 +193,7 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
             <div className="font-bold text-lg mb-8 whitespace-nowrap text-center">
               目前還沒有簽名喔~
             </div>
-            <div className="text-sm">請創建新的簽名檔，可上傳圖片或線上簽名</div>
+            <div className="text-sm text-center">請創建新的簽名檔，可上傳圖片或線上簽名</div>
             <label
               className="flex justify-center proj-text-primary mt-4 whitespace-nowrap bg-white rounded"
             >

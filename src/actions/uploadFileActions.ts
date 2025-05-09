@@ -22,6 +22,6 @@ export const uploadFileInfo = (id: string, data: string) => {
   return axios.patch(`${url}/file/${id}/fileInfo`,data);
 }
 
-export const updateFile = (id:string ,title:string, isSigned:boolean) =>{
+export const updateFile = (id:string ,title:string, isSigned:boolean) => {
   return axios.patch(`${url}/file/${id}?${title}&isSigned=${isSigned}`);
 }

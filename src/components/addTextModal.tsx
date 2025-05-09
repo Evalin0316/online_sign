@@ -1,38 +1,33 @@
 import React, { useState } from 'react';
 
-const AddTextModal = ({ showModal, onHideTextModal }) => {
+import iconClose from '../assets/images/icon_Close_Square_n.png';
+
+interface AddTextModalProps {
+  setShowTextModal: (show: boolean) => void;
+  addTextFromInput: (text: string) => void;
+}
+
+const AddTextModal = ({ setShowTextModal, addTextFromInput }: AddTextModalProps) => {
   const [text, setText] = useState('');
-
-  const addText = () => {
-      window.bus.emit('saveText', text);
-      onHideTextModal();
-  };
-
-  const closeWarning = () => {
-      setText('');
-      onHideTextModal();
-  };
-
-  if (!showModal) return null;
 
   return (
     <div
       className="w-full left-0 top-0 fixed h-screen"
       style={{ background: 'rgba(140, 93, 25, 0.3)' }}
     >
-      <div className="text__container">
-        <div className="text__container__header mt-3" onClick={closeWarning}>
-            <img src="../assets/images/icon_Close_Square_n.png" alt="Close" />
+      <div className="text-container">
+        <div className="text-container-header mt-3" onClick={() => { setShowTextModal(false) }}>
+          <img src={iconClose} alt="Close" />
         </div>
-        <div className="text__container__content">
+        <div className="text-container-content">
           <textarea
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              className="textInput"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            className="textInput"
           />
         </div>
-        <div className="text__container__button" onClick={addText}>
-            新增文字
+        <div className="text-container-button text-center" onClick={() => { addTextFromInput(text) }}>
+          新增文字
         </div>
       </div>
     </div>

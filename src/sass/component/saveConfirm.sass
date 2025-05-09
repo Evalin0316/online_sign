@@ -1,0 +1,33 @@
+@mixin media-min-lg
+  @media screen and (min-width: 960px)
+    @content
+
+.confirm__container
+  @apply shadow-md flex justify-center items-center flex-col absolute
+  background: #FFFFFF
+  width: 45%
+  height: 200px
+  left: 50%
+  top: 40%
+  transform: translate(-50%, -50%)
+  z-index: 999
+  border-radius: 20px
+
+  @include media-min-lg
+    width: 25%
+
+  &__title
+    color: #8C5D19
+
+  &__group
+    &__button
+      height: 34px
+      color: #BE8E55
+      margin-top: 8px
+      background: #EFE3D4
+      padding: 5px 20px
+      border-radius: 4px
+      cursor: pointer
+      max-width: 300px
+      min-width: 70px
+      text-align: center

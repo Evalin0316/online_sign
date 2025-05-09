@@ -1,0 +1,32 @@
+.text-container
+  @apply shadow-md flex justify-center items-center flex-col absolute
+  background: #EFE3D4
+  width: 300px
+  height: 200px
+  left: 50%
+  top: 40%
+  transform: translate(-50%, -50%)
+  z-index: 999
+  border-radius: 20px
+
+  &-header
+    @apply mt-3
+    img
+      @apply absolute right-0 top-0 mr-4 mt-4
+
+  &-content
+    textarea
+      width: 200px
+      height: 90px
+      border-radius: 4px
+      padding: 10px
+
+  &-button
+    width: 100px
+    height: 30px
+    color: #FFFFFF
+    margin-top: 8px
+    background: #DEAF7B
+    padding: 4px
+    border-radius: 10px
+    cursor: pointer

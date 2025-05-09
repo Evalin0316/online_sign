@@ -16,6 +16,7 @@ const ReactSketchCanvas = (props: ReactSketchCanvasProps) => {
   const { setShowAddSignModal } = props;
   const canvasRef = useRef<ReactSketchCanvasRef>(null);
   const [strokeColor, setStrokeColor] = useState("#000000");
+
   // const [canvasColor, setCanvasColor] = useState("#ffffff");
 
   const handleStrokeColorChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -43,18 +44,17 @@ const ReactSketchCanvas = (props: ReactSketchCanvasProps) => {
     fromData.append('image', imageUriTransform ,'image'+ Math.round(Math.random()*1000));
 
     uploadImage(fromData)
-    .then((res)=>{
+    .then((res)=> {
       if (res.data.status == true) {
         alert(res.data.data)
       }
     })
-    .catch((err)=>{
+    .catch((err)=> {
       alert(err.message);
     })
   }
 
   const dataURItoBlob = (dataURI: string) =>  {
-    console.log(dataURI);
     // convert base64/URLEncoded data component to raw binary data held in a string
     var byteString;
     if (dataURI.split(',')[0].indexOf('base64') >= 0)
@@ -85,16 +85,16 @@ const ReactSketchCanvas = (props: ReactSketchCanvasProps) => {
           alt="close"
          />
        </div>
-       <div className="index_Sign flex flex-col items-center w-full py-4 px-2 mt-4">
+       <div className="index_Sign flex flex-col items-center w-full py-4 px-8 mt-8">
         <SketchCanvas
           width="100%"
           height="150px"
           ref={canvasRef}
           strokeColor={strokeColor}
-          // canvasColor={canvasColor}
+          canvasColor={'transparent'}
         />
        </div>
-       <div className="flex justify-around">
+       <div className="flex justify-around items-center my-3">
         <button
           type="button"
           onClick={handleClearClick}
@@ -102,11 +102,14 @@ const ReactSketchCanvas = (props: ReactSketchCanvasProps) => {
             Clear
         </button>
         <div className="flex justify-center">
-          <input
+          {/* <input
             type="color"
             value={strokeColor}
             onChange={handleStrokeColorChange}
-          />
+          /> */}
+          <div className="rounded-[50%] bg-[#D2464F] w-8 h-8 cursor-pointer mx-2" onClick={() => setStrokeColor('#D2464F') }></div>
+          <div className="rounded-[50%] bg-[#4665D2] w-8 h-8 cursor-pointer mx-2" onClick={() => setStrokeColor('#4665D2') }></div>
+          <div className="rounded-[50%] bg-[#585C68] w-8 h-8 cursor-pointer mx-2" onClick={() => setStrokeColor('#585C68') }></div>
         </div>
         <button
           type="button"

@@ -7,6 +7,7 @@ import AddTextModal from "../components/addTextModal";
 import SelectSign from "../components/selectSign";
 import Header from "../components/header";
 import ProgressLine from "../components/progressLine";
+import SaveConfirm from "../components/saveConfirmModal";
 // import AlertMessage from "../components/AlertMessage";
 // import bus from "../script/bus";
 import { uploadFile, uploadSignInfo, uploadFileInfo } from "../actions/uploadFileActions";
@@ -16,13 +17,14 @@ const AddSign = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [ showTextModal, setShowTextModal ] = useState(false);
   const [ showSignImagesList, setShowSignImagesList ] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertText, setAlertText] = useState("");
-  const [uploadStatus, setUploadStatus] = useState(false);
-  const [fileName, setFileName] = useState("");
-  const [signTitle, setSignTitle] = useState("");
-  const [isFileChange, setIsFileChange] = useState(false);
-  const [isFileNameChange, setIsFileNameChange] = useState(false);
+  const [ showSaveConfirm, setShowSaveConfirm ] = useState(false);
+  // const [showAlert, setShowAlert] = useState(false);
+  // const [alertText, setAlertText] = useState("");
+  // const [uploadStatus, setUploadStatus] = useState(false);
+  // const [fileName, setFileName] = useState("");
+  // const [signTitle, setSignTitle] = useState("");
+  // const [isFileChange, setIsFileChange] = useState(false);
+  // const [isFileNameChange, setIsFileNameChange] = useState(false);
   let canvas = useRef<fabric.Canvas | null>(null);
 
   const navigate = useNavigate();
@@ -111,17 +113,6 @@ const AddSign = () => {
     Init(1);
   };
 
-    // /*------------開啟新增文字dialog-------------*/
-    // const textBtn = document.querySelector('.textBtn')
-    // textBtn.addEventListener('click', () => {
-    //     showText.value = true;
-    // })
-
-  // add sign from images inventory
-  const addSignInventory = () => {
-    setShowSignImagesList(true);
-  };
-
   // add time stamp
   const addTimeStamp = () => {
     const day = new Date();
@@ -135,6 +126,11 @@ const AddSign = () => {
     canvas.current.add(text);
   };
 
+  // add sign from images inventory
+  const showSignInventory = () => {
+    setShowSignImagesList(true);
+  };
+
   const addSignFromInventory = (url: string) => {
     fabric.Image.fromURL(url, (image) => {
       image.top = 100;
@@ -145,13 +141,34 @@ const AddSign = () => {
     });
   }
 
+  // add text use input filed
+  const showAddText = () => {
+    setShowTextModal(true);
+  }
+
+  const addTextFromInput = (text: string) => {
+    const wording = new fabric.Text(text, {
+      top: 100,
+      left: 100,
+      scaleX: 0.5,
+      scaleY: 0.5
+    });
+    canvas.current.add(wording);
+  }
+
+  const showConfirmModal = () => {
+    setShowSaveConfirm(true);
+  }
+
   return (
     <div>
       <Header
         pageStatus={pageStatus}
         fileId={fileId}
         addTimeStamp={addTimeStamp}
-        addSignInventory={addSignInventory}
+        addSignInventory={showSignInventory}
+        addText={showAddText}
+        nextStep={showConfirmModal}
       />
       <div className="container_sign">
         <div className="flex justify-center pt-10 pb-10">
@@ -159,8 +176,8 @@ const AddSign = () => {
         </div>
         <div className="flex justify-center pt-10 pb-10">
           <div className="container_pdf h-screen relative overflow-x-hidden">
-            <div className="styledCreate__WrapperRight-sc-1i4fuzv-10 cKAFxH">
-              <div id="viewer" tabIndex={10} className="styled__Wrapper-sc-cpx59f-1 gKmbon overflow-x-hidden">
+            <div className="container_viewer">
+              <div id="viewer" tabIndex={10} className="container_viewer_inner overflow-x-hidden">
                 <div className="react-pdf__Document">
                   <div id="pageContainer1" className="styled__WrapperPage-sc-cpx59f-2 cFGXRm page">
                     <div className="react-pdf__Page" data-page-number="1" style={{ position: "relative" }}>
@@ -171,13 +188,19 @@ const AddSign = () => {
               </div>
             </div>
             <input type="file" className="form-control hidden pdf_upload" ref={fileInputRef} />
-            {/* <AddTextModal showModal={showTextModal} onClose={() => setShowTextModal(false)} /> */}
+            {showTextModal && (
+              <AddTextModal
+                setShowTextModal={setShowTextModal}
+                addTextFromInput={addTextFromInput}
+              />
+            )}
             {showSignImagesList && (
               <SelectSign
                 setShowSignImagesList={setShowSignImagesList}
                 addSignFromInventory={addSignFromInventory}
               />
             )}
+            {showSaveConfirm && <SaveConfirm setShowSaveConfirm={setShowSaveConfirm} />}
             {/* <AlertMessage showAlert={showAlert} textContent={alertText} uploadStatus={uploadStatus} /> */}
           </div>
         </div>

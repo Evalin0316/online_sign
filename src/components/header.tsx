@@ -10,7 +10,7 @@ import tabText from "../assets/images/Tab_text.png";
 
 const Header = (props) => {
   const navigate = useNavigate();
-  const { pageStatus, nextStep, fileId, addSignInventory, addTimeStamp } = props;
+  const { pageStatus, nextStep, fileId, addSignInventory, addTimeStamp, addText } = props;
   const [headerStatus, setHeaderStatus] = useState<string>("fileUpload");
   const [fileReview, setFileReview] = useState<boolean>(false);
   const [tooltipText] = useState<string>(
@@ -75,7 +75,7 @@ const Header = (props) => {
             <a className="dateBtn flex flex-col items-center w-20 cursor-pointer" onClick={addTimeStamp}>
               <img src={tabDate} alt="Date" />
             </a>
-            <a className="textBtn flex flex-col items-center w-20 cursor-pointer">
+            <a className="textBtn flex flex-col items-center w-20 cursor-pointer" onClick={addText}>
               <img src={tabText} alt="Text" />
             </a>
           </div>
