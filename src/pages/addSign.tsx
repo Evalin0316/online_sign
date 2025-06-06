@@ -18,6 +18,7 @@ const AddSign = () => {
   const [ showTextModal, setShowTextModal ] = useState(false);
   const [ showSignImagesList, setShowSignImagesList ] = useState(false);
   const [ showSaveConfirm, setShowSaveConfirm ] = useState(false);
+  const [ isSaveFile, setIsSaveFile ] =  useState(false);
   // const [showAlert, setShowAlert] = useState(false);
   // const [alertText, setAlertText] = useState("");
   // const [uploadStatus, setUploadStatus] = useState(false);
@@ -32,19 +33,11 @@ const AddSign = () => {
     pageStatus: string;
     fileId: string | null;
     fileInfo: any;
+    setFileId: (id: string | null) => void;
     setPageStatus: (status: string) => void;
   };
   const { pageStatus, fileId, fileInfo, setPageStatus } = appContext;
   
-  useEffect(() => {
-    renderPDF(fileInfo);
-    setPageStatus("addSign");
-
-    return () => {
-      canvas.current.dispose();
-    };
-  }, []);
-
   const renderPDF = (file: File) => {
     const Base64Prefix = 'data:application/pdf;base64,'
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.mjs';
@@ -160,6 +153,42 @@ const AddSign = () => {
     setShowSaveConfirm(true);
   }
 
+  useEffect(() => {
+    if (isSaveFile) {
+
+      const pdf = new jsPDF();
+      const image = canvas.toDataURL("image/png")
+        // 設定背景在 PDF 中的位置及大小
+        const width = pdf.internal.pageSize.width;
+        const height = pdf.internal.pageSize.height
+        pdf.addImage(image, "png", 0, 0, width, height)
+
+      const blobPDF = new Blob([pdf.output('blob')],{type: 'application/pdf'})
+      const fromData = new FormData();
+
+      fromData.append('file', blobPDF, fileInfo.name);
+      fromData.append('fileName', fileInfo.name);
+
+      uploadFile(fromData).then((res)=> {
+        if(res.data.status) {
+          let fileId = res.data.data.id;
+          let signInfo = {
+            title:　fileInfo.name
+          }
+        }
+      })
+    }
+  }, [ isSaveFile ])
+
+  useEffect(() => {
+    renderPDF(fileInfo);
+    setPageStatus("addSign");
+
+    return () => {
+      canvas.current.dispose();
+    };
+  }, []);
+
   return (
     <div>
       <Header
@@ -203,6 +232,7 @@ const AddSign = () => {
             {showSaveConfirm && (
               <SaveConfirm 
                 setShowSaveConfirm={setShowSaveConfirm}
+                setIsSaveFile={setIsSaveFile}
               />
             )}
             {/* <AlertMessage showAlert={showAlert} textContent={alertText} uploadStatus={uploadStatus} /> */}
