@@ -8,7 +8,16 @@ import tabSign from "../assets/images/Tab_sign.png";
 import tabDate from "../assets/images/Tab_date.png";
 import tabText from "../assets/images/Tab_text.png";
 
-const Header = (props) => {
+interface Props {
+  pageStatus: string,
+  nextStep: string,
+  fileId: string,
+  addSignInventory: () => void,
+  addTimeStamp: () => void,
+  addText: () => void
+}
+
+const Header = (props: Props) => {
   const navigate = useNavigate();
   const { pageStatus, nextStep, fileId, addSignInventory, addTimeStamp, addText } = props;
   const [headerStatus, setHeaderStatus] = useState<string>("fileUpload");
@@ -38,6 +47,17 @@ const Header = (props) => {
     // Emit saveDraft event
   };
 
+  const previousPath = () => {
+    if (pageStatus === "fileUpload") {
+      return '/';
+    } else if (pageStatus !== "fileUpload" && fileId) {
+      return `/upload/${fileId}`;
+    } else if (pageStatus !== "fileUpload") {
+      return '/upload';
+    }
+    return '/';
+  }
+
   return (
     <div className="bg-white text-black">
       {/* signList */}
@@ -56,7 +76,7 @@ const Header = (props) => {
             buttonText={pageStatus === 'fileUpload' ? 'Cancel' : 'Previous'}
             textPosition="ml-5"
             otherClass=""
-            applyFn={() => navigate(pageStatus === "fileUpload" ? '/' : `/upload/${fileId}`)}
+            applyFn={() => navigate(previousPath())}
           >
             <img
               className="left-2 top-1 absolute"

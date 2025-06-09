@@ -10,11 +10,11 @@ export const getSingleFile = (fileLocation: string) => {
   return axios.get(`${fileLocation}`,{responseType:'blob'});
 }
 
-export const uploadFile = (data: string) => {
+export const uploadFile = (data: object) => {
   return axios.post(`${url}/file`,data);
 }
 
-export const uploadSignInfo = (id: string, data: string) => {
+export const uploadSignInfo = (id: string, data: object) => {
   return axios.patch(`${url}/file/${id}/signInfo`,data);
 }
 

@@ -51,23 +51,22 @@ const AddSign = () => {
       })
     }
 
-    const printPDF = async(pdfData, index) => {
+    const printPDF = async(pdfData: any, index: number) => {
       let data = '';
-      // 將檔案處理成 base64
+      // Convert the file to base64
       pdfData = await readBlob(pdfData)
-      // 將base64 中的前綴刪除，並進行解碼
+      // Remove the prefix from the base64 string and decode it
       data = atob(pdfData.substring(Base64Prefix.length))
-      // 利用解碼的檔案，載入PDF檔及第一頁
+      // Using the decoded file, load the PDF file and the first page
       const pdfDoc = await pdfjsLib.getDocument({ data }).promise
       const pdfPage = await pdfDoc.getPage(index ?? 1)
-      // pageCount.value = pdfDoc.numPages
       const viewport = pdfPage.getViewport({ scale: window.devicePixelRatio })
 
-      // 設定尺寸及產生canvas
+      // Set dimensions and generate canvas
       // const viewport = pdfPage.getViewport({ scale: 1 })
       const canvas = document.createElement('canvas')
       const context = canvas.getContext('2d')
-      // 設定PDF 所要顯示的寬高及渲染
+      // Set the width and height for displaying the PDF and render it
       canvas.height = viewport.height
       canvas.width = viewport.width
       const renderContext: any = {
@@ -75,12 +74,12 @@ const AddSign = () => {
         viewport
       }
       const renderTask = pdfPage.render(renderContext)
-      // 回傳做好的PDF canvas
+      // Return the rendered PDF canvas
       return renderTask.promise.then(() => canvas)
     }
 
     const pdfToImage = async(pdfData:any) => {
-      // 設定 PDF 轉為圖片時的比例
+      // Set the scale for converting PDF to image
       const scale = 1 / window.devicePixelRatio;
       return new fabric.Image(pdfData, {
         id: "renderPDF",
@@ -90,20 +89,19 @@ const AddSign = () => {
     }
 
     canvas.current = new fabric.Canvas('canvas');
-    const Init = async (index: number) => {
+    const renderInitialPage = async (pageIndex: number) => {
       canvas.current?.requestRenderAll();
-      const pdfData = await printPDF(file, index);
+      const pdfData = await printPDF(file, pageIndex);
       const pdfImage = await pdfToImage(pdfData);
-      // 透過比例設定canvas 尺寸
+      // Set canvas dimensions using scale
       canvas.current?.setWidth((pdfImage.width ?? 0) / window.devicePixelRatio);
       canvas.current?.setHeight((pdfImage.height ?? 0) / window.devicePixelRatio);
 
-
-      // 將 PDF 畫面設定為背景
+      // Set the PDF view as the background
       canvas.current?.setBackgroundImage(pdfImage, canvas.current.renderAll.bind(canvas.current));
     };
       
-    Init(1);
+    renderInitialPage(1);
   };
 
   // add time stamp
@@ -155,28 +153,45 @@ const AddSign = () => {
 
   useEffect(() => {
     if (isSaveFile) {
-
       const pdf = new jsPDF();
-      const image = canvas.toDataURL("image/png")
-        // 設定背景在 PDF 中的位置及大小
-        const width = pdf.internal.pageSize.width;
-        const height = pdf.internal.pageSize.height
-        pdf.addImage(image, "png", 0, 0, width, height)
+      const image = canvas.current?.toDataURL("image/png")
 
+      const width = pdf.internal.pageSize.width;
+      const height = pdf.internal.pageSize.height
+      if (image) {
+        pdf.addImage(image, "png", 0, 0, width, height)
+      }
+      
       const blobPDF = new Blob([pdf.output('blob')],{type: 'application/pdf'})
       const fromData = new FormData();
 
       fromData.append('file', blobPDF, fileInfo.name);
       fromData.append('fileName', fileInfo.name);
-
-      uploadFile(fromData).then((res)=> {
-        if(res.data.status) {
-          let fileId = res.data.data.id;
-          let signInfo = {
-            title:　fileInfo.name
+  
+      // NOTE: Upload the file using uploadFile and save its metadata using uploadSignInfo
+      uploadFile(fromData)
+        .then((res)=> {
+          if (res.data.status) {
+            let fileId = res.data.data.id;
+            let signInfo = {
+              title: fileInfo.name,
+              isSigned: true
+            }
+            // upload sign info
+            uploadSignInfo(fileId, signInfo)
+            .then((res) => {
+              if (res.data.status) {
+                navigate('/');
+              }
+            })
+            .catch((err) => {
+              alert(err);
+            })
           }
-        }
-      })
+        })
+        .catch((error) => {
+          alert(error);
+        })
     }
   }, [ isSaveFile ])
 
@@ -185,7 +200,9 @@ const AddSign = () => {
     setPageStatus("addSign");
 
     return () => {
-      canvas.current.dispose();
+      if (canvas.current) {
+        canvas.current.dispose();
+      }
     };
   }, []);
 
