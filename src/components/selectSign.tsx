@@ -32,6 +32,7 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
     loadImageList();
   }, []);
 
+  // load image list
   const loadImageList = () => {
     loadImages()
       .then((res: any) => {
@@ -52,6 +53,7 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
       });
   };
 
+  // delete image 
   const deleteImageBtn = (id: string, url: string) => {
     const getUrl = url.split('/');
     const imageName = getUrl[3];
@@ -84,6 +86,7 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
     image.src = imgUrl;
   };
 
+  // upload image
   const uploadImageBtn = () => {
     const fileInput = fileElement.current?.files?.[0];
   
@@ -104,6 +107,7 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
       .then((res) => {
         if (res.data.status) {
           alert(res.data.data);
+          loadImageList();
         } else {
           alert('圖片上傳失敗');
         }
@@ -136,7 +140,7 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
               </div>
               <div className="selected-modal overflow-auto flex items-center justify-center flex-wrap">
                 {signList.map((item, idx) => (
-                  <div key={idx} className="mb-2 flex justify-center">
+                  <div key={idx} className="mb-2 relative">
                     <div
                       className="h-auto bg-white w-4/5 rounded-3xl py-2"
                       onClick={() => addSignFromInventory(item.url)}
@@ -148,13 +152,13 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
                         referrerPolicy="no-referrer"
                       />
                     </div>
-                    <span onClick={() => deleteImageBtn(item.id, item.imageUrl)}>
+                    <div className="absolute top-0 right-5" onClick={() => deleteImageBtn(item.id, item.imageUrl)}>
                       <img
                         className="mr-4 mt-2"
                         src={iconSquare}
                         alt="delete"
                       />
-                    </span>
+                    </div>
                   </div>
                 ))}
               </div>
