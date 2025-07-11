@@ -4,8 +4,9 @@ import {
   ReactSketchCanvas as SketchCanvas,
   ReactSketchCanvasRef,
 } from "react-sketch-canvas";
+import { ToastContainer, toast } from 'react-toastify';
 
-import iconClose from "../assets/images/icon_Close_Square_n.png";
+import iconClose from "../../assets/images/icon_Close_Square_n.png";
 
 interface ReactSketchCanvasProps {
   setShowAddSignModal: (show: boolean) => void;
@@ -36,7 +37,10 @@ const ReactSketchCanvas = (props: ReactSketchCanvasProps) => {
     uploadImage(fromData)
     .then((res)=> {
       if (res.data.status == true) {
-        alert(res.data.data)
+        toast.success(res.data.data, {
+          position: 'top-center',
+          autoClose: 2000
+        });
         setShowAddSignModal(false);
         loadImageList();
       }
@@ -68,7 +72,7 @@ const ReactSketchCanvas = (props: ReactSketchCanvasProps) => {
   return (
     <div className="card-inner absolute text-xl w-[500px] z-50 pop-container max-[768px]:w-[343px]">
      <div className="bg rounded-3xl overflow-hidden shadow-lg w-full">
-        <div 
+        <div
           className="relative mt-3"
           onClick={() => setShowAddSignModal(false)}
         >

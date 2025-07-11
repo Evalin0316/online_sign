@@ -8,7 +8,7 @@ export const loadSingleFile = (durl) => {
 
 export const loadFileList = async (from: number, count: number) => {
   const res = await axios.get(`${url}/file?from=${from}&count=${count}`);
-  return res.data.data;
+  return res;
 }
 
 export const deleteFile = (id: string, filename: string) => {

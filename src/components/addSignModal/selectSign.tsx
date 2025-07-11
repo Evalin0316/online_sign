@@ -4,6 +4,7 @@ import { fabric } from "fabric";
 // import bus from '../srcipt/bus';
 import { loadImages, deleteImage, uploadImage } from '../../actions/signImageAction';
 import ReactSketchCanvas from './reactSketchCanvas'
+import { ToastContainer, toast } from 'react-toastify';
 
 import iconSquare from '../../assets/images/icon_Close_Square_n.png';
 import iconAddNewSign from '../../assets/images/icon_add_new_sign_n.svg';
@@ -60,7 +61,10 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
     deleteImage(id, imageName)
       .then((res) => {
         if (res.data.status) {
-          alert(res.data.data);
+          toast.success(res.data.data, {
+            position: 'top-center',
+            autoClose: 2000
+          })
           setSignList(pre => pre.filter((image) => image.id !== id));
         }
       })
@@ -91,12 +95,18 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
     const fileInput = fileElement.current?.files?.[0];
   
     if (!fileInput) {
-      alert('請選擇一張圖片');
+      toast.warn('請選擇一張圖片', {
+        position: 'top-center',
+        autoClose: 1500
+      })
       return;
     }
   
     if (fileInput.size <= 0) {
-      alert('檔案大小為 0，請重新選擇圖片');
+      toast.warn('檔案大小為 0，請重新選擇圖片', {
+        position: 'top-center',
+        autoClose: 1500
+      })
       return;
     }
   
@@ -106,10 +116,16 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
     uploadImage(formData)
       .then((res) => {
         if (res.data.status) {
-          alert(res.data.data);
+          toast.success(res.data.data, {
+            position: 'top-center',
+            autoClose: 2000
+          })
           loadImageList();
         } else {
-          alert('圖片上傳失敗');
+          toast.error(res.data.data, {
+            position: 'top-center',
+            autoClose: 2000
+          })
         }
       })
       .catch((err) => {
@@ -237,6 +253,7 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
           loadImageList={loadImageList}
         />
       )}
+      <ToastContainer />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import iconClose from '../assets/images/icon_Close_Square_n.png';
+import iconClose from '../../assets/images/icon_Close_Square_n.png';
 
 interface AddTextModalProps {
   setShowTextModal: (show: boolean) => void;

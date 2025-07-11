@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Pagination from '../components/pagination';
 import Header from '../components/header';
 import { AppContext } from '../provider';
+import { HashLoader } from "react-spinners";
 
 import clearButton from '../assets/images/icon_Close_n.png';
 import iconDownload from '../assets/images/icon_download_n.svg';
@@ -31,6 +32,9 @@ const SignList = () => {
   const [ totalFiles, setTotalFiles ] = useState(1);
   const [ selected, setSelected ] = useState(-1);
   const [ page, setPage ] = useState(1);
+  const [ loading, setLoading ] = useState(true);
+  const [ color, setColor ] = useState("#ffffff");
+
   const appContext = useContext(AppContext) as {
     pageStatus: string;
     setPageStatus: (status: string) => void;
@@ -53,9 +57,14 @@ const SignList = () => {
   };
 
   useEffect(() => {
-    loadFileList((page -1) * 10, 10).then((res: { data: any, size: number }) => {
-      setFileList(res.data);
-      setTotalFiles(res.size);
+    loadFileList((page -1) * 10, 10).then((res) => {
+      setLoading(true)
+      if(res.data.code === 200) {
+        setFileList(res.data.data.data);
+        setTotalFiles(res.data.size);
+      }
+
+      setLoading(false)
     });
   }, [ page ]);
 
@@ -187,7 +196,18 @@ const SignList = () => {
           ))
         }
         </ul>
-        {!fileList.length && <div className='flex justify-center text-[#BE8E55]'>還沒有檔案呦...</div>}
+        {!fileList.length && !loading && <div className='flex justify-center text-[#BE8E55]'>還沒有檔案呦...</div>}
+        {/* loader */}
+        <div className='flex justify-center mt-4'>
+          <HashLoader
+            color={color}
+            loading={loading}
+            // cssOverride={override}
+            size={50}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          />
+        </div>
         {/* pagination */}
         {!!fileList.length &&
           <div className="flex justify-center item-center">
