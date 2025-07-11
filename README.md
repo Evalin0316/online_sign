@@ -76,3 +76,8 @@
 - [PDF.js](https://mozilla.github.io/pdf.js/)
 
 Feel free to contribute to this project by submitting issues or pull requests!
+
+pages
+ ┣ addSign.tsx (add sign page --step2)
+ ┣ fileUpload.tsx (file upload page --step1)
+ ┗ signList.tsx (homePage)
