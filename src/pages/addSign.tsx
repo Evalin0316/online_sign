@@ -3,8 +3,8 @@ import { fabric } from "fabric";
 import jsPDF from "jspdf";
 import { useNavigate } from "react-router-dom";
 
-import AddTextModal from "../components/addTextModal";
-import SelectSign from "../components/selectSign";
+import AddTextModal from "../components/addSignModal/addTextModal";
+import SelectSign from "../components/addSignModal/selectSign";
 import Header from "../components/header";
 import ProgressLine from "../components/progressLine";
 import SaveConfirm from "../components/saveConfirmModal";
@@ -19,13 +19,6 @@ const AddSign = () => {
   const [ showSignImagesList, setShowSignImagesList ] = useState(false);
   const [ showSaveConfirm, setShowSaveConfirm ] = useState(false);
   const [ isSaveFile, setIsSaveFile ] =  useState(false);
-  // const [showAlert, setShowAlert] = useState(false);
-  // const [alertText, setAlertText] = useState("");
-  // const [uploadStatus, setUploadStatus] = useState(false);
-  // const [fileName, setFileName] = useState("");
-  // const [signTitle, setSignTitle] = useState("");
-  // const [isFileChange, setIsFileChange] = useState(false);
-  // const [isFileNameChange, setIsFileNameChange] = useState(false);
   let canvas = useRef<fabric.Canvas | null>(null);
 
   const navigate = useNavigate();

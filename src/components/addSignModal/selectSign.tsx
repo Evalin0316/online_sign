@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { fabric } from "fabric";
 // import CanvasDraw from './CanvasDraw';
 // import bus from '../srcipt/bus';
-import { loadImages, deleteImage, uploadImage } from '../actions/signImageAction';
+import { loadImages, deleteImage, uploadImage } from '../../actions/signImageAction';
 import ReactSketchCanvas from './reactSketchCanvas'
 
-import iconSquare from '../assets/images/icon_Close_Square_n.png';
-import iconAddNewSign from '../assets/images/icon_add_new_sign_n.svg';
-import iconAddNewSignHover from '../assets/images/icon_add_new_img_n.svg';
+import iconSquare from '../../assets/images/icon_Close_Square_n.png';
+import iconAddNewSign from '../../assets/images/icon_add_new_sign_n.svg';
+import iconAddNewSignHover from '../../assets/images/icon_add_new_img_n.svg';
 
 interface SelectSignProps {
   setShowSignImagesList: (show: boolean) => void;
@@ -117,7 +117,7 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
       });
   };
 
-
+  // add manual sign
   const addNewSign = () => {
     setShowAddSignModal(true);
   };
@@ -152,7 +152,10 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
                         referrerPolicy="no-referrer"
                       />
                     </div>
-                    <div className="absolute top-0 right-5" onClick={() => deleteImageBtn(item.id, item.imageUrl)}>
+                    <div 
+                      className="absolute top-0 right-5" 
+                      onClick={() => deleteImageBtn(item.id, item.imageUrl)}
+                    >
                       <img
                         className="mr-4 mt-2"
                         src={iconSquare}
@@ -183,47 +186,55 @@ const SelectSign = ({ setShowSignImagesList, addSignFromInventory }: SelectSignP
           </div>
         </div>
       )}
+      {/* sign list empty */}
       {signList.length === 0 && (
         <div className="card-inner absolute text-xl pop-container-choose w-full z-50">
-        <div className="relative mt-3" onClick={() => setShowSignImagesList(false)}>
-          <img
-            className="absolute right-0 top-0 mr-4 mt-3 close_square"
-            src={iconSquare}
-            alt="close"
-          />
-        </div>
-        <div className="bg rounded-3xl overflow-hidden shadow-lg w-full">
-          <div className="px-4 py-6 flex flex-col justify-center w-full"></div>
+          <div className="relative mt-3" onClick={() => setShowSignImagesList(false)}>
+            <img
+              className="absolute right-0 top-0 mr-4 mt-3 close_square"
+              src={iconSquare}
+              alt="close"
+            />
+          </div>
+          <div className="bg rounded-3xl overflow-hidden shadow-lg w-full p-4">
             <div className="font-bold text-lg mb-8 whitespace-nowrap text-center">
               目前還沒有簽名喔~
             </div>
             <div className="text-sm text-center">請創建新的簽名檔，可上傳圖片或線上簽名</div>
-            <label
-              className="flex justify-center proj-text-primary mt-4 whitespace-nowrap bg-white rounded"
-            >
-              <img src={iconAddNewSign} alt="add" />
-              <span 
-                className="text-[#8C5D19] font-[700] text-[14px] ml-1"
+            <div className='flex justify-center'>
+              <div
+                className="flex justify-center proj-text-primary mt-4 whitespace-nowrap bg-white rounded w-6/12"
                 onClick={() => addNewSign()}
-              >建立簽名</span>
-            </label>
-            <label className="flex justify-center mt-4 bg-white rounded">
-              <img src={iconAddNewSignHover} alt="upload" />
-              <span className="text-[#8C5D19] font-[700] text-[14px] ml-1">上傳簽名圖檔</span>
-              <input
-                className="form-control hidden"
-                ref={fileElement}
-                type="file"
-                accept="image/*"
-                onChange={uploadImageBtn}
-              />
-            </label>
+              >
+                <img src={iconAddNewSign} alt="add" />
+                <span
+                  className="text-[#8C5D19] font-[700] text-[14px] ml-1"
+                >
+                  建立簽名
+                </span>
+              </div>
+            </div>
+            <div className='flex justify-center mb-4'>
+              <div className="flex justify-center mt-4 bg-white rounded w-6/12">
+                <img src={iconAddNewSignHover} alt="upload" />
+                <span className="text-[#8C5D19] font-[700] text-[14px] ml-1">上傳簽名圖檔</span>
+                <input
+                  className="form-control hidden"
+                  ref={fileElement}
+                  type="file"
+                  accept="image/*"
+                  onChange={uploadImageBtn}
+                />
+              </div>
+            </div>
           </div>
         </div>
       )}
+      {/* add sign modal */}
       {showAddSignModal && (
         <ReactSketchCanvas
           setShowAddSignModal={setShowAddSignModal}
+          loadImageList={loadImageList}
         />
       )}
     </div>

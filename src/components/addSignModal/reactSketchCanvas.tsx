@@ -1,6 +1,5 @@
 import React, { ChangeEvent, useRef, useState } from "react";
-import { uploadImage } from "../actions/signImageAction";
-
+import { uploadImage } from "../../actions/signImageAction";
 import {
   ReactSketchCanvas as SketchCanvas,
   ReactSketchCanvasRef,
@@ -10,22 +9,13 @@ import iconClose from "../assets/images/icon_Close_Square_n.png";
 
 interface ReactSketchCanvasProps {
   setShowAddSignModal: (show: boolean) => void;
+  loadImageList: () => void;
 }
 
 const ReactSketchCanvas = (props: ReactSketchCanvasProps) => {
-  const { setShowAddSignModal } = props;
+  const { setShowAddSignModal, loadImageList } = props;
   const canvasRef = useRef<ReactSketchCanvasRef>(null);
   const [strokeColor, setStrokeColor] = useState("#000000");
-
-  // const [canvasColor, setCanvasColor] = useState("#ffffff");
-
-  const handleStrokeColorChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setStrokeColor(event.target.value);
-  };
-
-  // const handleCanvasColorChange = (event: ChangeEvent<HTMLInputElement>) => {
-  //   setCanvasColor(event.target.value);
-  // };
 
   const handleClearClick = () => {
     canvasRef.current?.clearCanvas();
@@ -47,6 +37,8 @@ const ReactSketchCanvas = (props: ReactSketchCanvasProps) => {
     .then((res)=> {
       if (res.data.status == true) {
         alert(res.data.data)
+        setShowAddSignModal(false);
+        loadImageList();
       }
     })
     .catch((err)=> {
@@ -76,7 +68,8 @@ const ReactSketchCanvas = (props: ReactSketchCanvasProps) => {
   return (
     <div className="card-inner absolute text-xl w-[500px] z-50 pop-container max-[768px]:w-[343px]">
      <div className="bg rounded-3xl overflow-hidden shadow-lg w-full">
-       <div className="relative mt-3"
+        <div 
+          className="relative mt-3"
           onClick={() => setShowAddSignModal(false)}
         >
          <img
@@ -84,7 +77,7 @@ const ReactSketchCanvas = (props: ReactSketchCanvasProps) => {
           src={iconClose}
           alt="close"
          />
-       </div>
+        </div>
        <div className="index_Sign flex flex-col items-center w-full py-4 px-8 mt-8">
         <SketchCanvas
           width="100%"
@@ -93,20 +86,15 @@ const ReactSketchCanvas = (props: ReactSketchCanvasProps) => {
           strokeColor={strokeColor}
           canvasColor={'transparent'}
         />
-       </div>
+        </div>
        <div className="flex justify-around items-center my-3">
         <button
           type="button"
           onClick={handleClearClick}
           className="py-3 px-3 w-[80px] rounded-lg border-2 bg-white">
-            Clear
+            清除
         </button>
         <div className="flex justify-center">
-          {/* <input
-            type="color"
-            value={strokeColor}
-            onChange={handleStrokeColorChange}
-          /> */}
           <div className="rounded-[50%] bg-[#D2464F] w-8 h-8 cursor-pointer mx-2" onClick={() => setStrokeColor('#D2464F') }></div>
           <div className="rounded-[50%] bg-[#4665D2] w-8 h-8 cursor-pointer mx-2" onClick={() => setStrokeColor('#4665D2') }></div>
           <div className="rounded-[50%] bg-[#585C68] w-8 h-8 cursor-pointer mx-2" onClick={() => setStrokeColor('#585C68') }></div>
@@ -115,7 +103,7 @@ const ReactSketchCanvas = (props: ReactSketchCanvasProps) => {
           type="button"
           onClick={saveSign}
           className="py-3 px-3 w-[80px] rounded-lg border-2 bg-white">
-            Save
+            儲存
         </button>
        </div>
      </div>
