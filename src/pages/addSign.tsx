@@ -9,7 +9,6 @@ import Header from "../components/header";
 import ProgressLine from "../components/progressLine";
 import SaveConfirm from "../components/saveConfirmModal";
 // import AlertMessage from "../components/AlertMessage";
-// import bus from "../script/bus";
 import { uploadFile, uploadSignInfo, uploadFileInfo } from "../actions/uploadFileActions";
 import { AppContext } from "../provider";
 
@@ -144,47 +143,55 @@ const AddSign = () => {
     setShowSaveConfirm(true);
   }
 
+  const getUploadFile = (isSigned: boolean) => {
+    const pdf = new jsPDF();
+    const image = canvas.current?.toDataURL("image/png")
+
+    const width = pdf.internal.pageSize.width;
+    const height = pdf.internal.pageSize.height
+    if (image) {
+      pdf.addImage(image, "png", 0, 0, width, height)
+    }
+    
+    const blobPDF = new Blob([pdf.output('blob')],{type: 'application/pdf'})
+    const fromData = new FormData();
+
+    fromData.append('file', blobPDF, fileInfo.name);
+    fromData.append('fileName', fileInfo.name);
+
+    // NOTE: Upload the file using uploadFile and save its metadata using uploadSignInfo
+    uploadFile(fromData)
+      .then((res)=> {
+        if (res.data.status) {
+          let fileId = res.data.data.id;
+          let signInfo = {
+            'title': fileInfo.name,
+            ...(isSigned ? { isSigned: isSigned } : {})
+          }
+          // upload sign info
+          uploadSignInfo(fileId, signInfo)
+          .then((res) => {
+            if (res.data.status) {
+              navigate('/');
+            }
+          })
+          .catch((err) => {
+            alert(err);
+          })
+        }
+      })
+      .catch((error) => {
+        alert(error);
+    })
+  }
+
+  const handleSaveDraft = () => {
+    getUploadFile(false);
+  }
+
   useEffect(() => {
     if (isSaveFile) {
-      const pdf = new jsPDF();
-      const image = canvas.current?.toDataURL("image/png")
-
-      const width = pdf.internal.pageSize.width;
-      const height = pdf.internal.pageSize.height
-      if (image) {
-        pdf.addImage(image, "png", 0, 0, width, height)
-      }
-      
-      const blobPDF = new Blob([pdf.output('blob')],{type: 'application/pdf'})
-      const fromData = new FormData();
-
-      fromData.append('file', blobPDF, fileInfo.name);
-      fromData.append('fileName', fileInfo.name);
-  
-      // NOTE: Upload the file using uploadFile and save its metadata using uploadSignInfo
-      uploadFile(fromData)
-        .then((res)=> {
-          if (res.data.status) {
-            let fileId = res.data.data.id;
-            let signInfo = {
-              title: fileInfo.name,
-              isSigned: true
-            }
-            // upload sign info
-            uploadSignInfo(fileId, signInfo)
-            .then((res) => {
-              if (res.data.status) {
-                navigate('/');
-              }
-            })
-            .catch((err) => {
-              alert(err);
-            })
-          }
-        })
-        .catch((error) => {
-          alert(error);
-        })
+      getUploadFile(true);
     }
   }, [ isSaveFile ])
 
@@ -208,6 +215,7 @@ const AddSign = () => {
         addSignInventory={showSignInventory}
         addText={showAddText}
         nextStep={showConfirmModal}
+        saveDraft={handleSaveDraft}
       />
       <div className="container_sign">
         <div className="flex justify-center pt-10 pb-10">

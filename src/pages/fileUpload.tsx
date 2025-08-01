@@ -12,11 +12,9 @@ const FileUpload = () => {
   const navigate = useNavigate();
 
   const [ filename, setFilename ] = useState("");
-  // const [ isFileReview, setIsFileReview ] = useState(false);
   const [ arrStatus, setArrStatus ] = useState(["doing", "undone", "undone"]);
   const [ step, setStep ] = useState(1);
   const [ isFileExist, setIsFileExist ] = useState(false);
-  const [ showConfirmModal, setShowConfirmModal ] = useState(false);
   const [ signFileName, setSignFileName ] = useState("");
   const fileElement = useRef<HTMLInputElement>(null);
   const { id: fileId } = useParams<{ id?: string }>();
@@ -67,29 +65,29 @@ const FileUpload = () => {
   }, [ fileId ]);
 
   const uploadFile = (data: FileList | null | undefined) => {
-    let fileData;
-    if (data) {
+    let fileData: File | undefined;
+  
+    if (data?.length) {
       fileData = data[0];
-      setFileInfo(fileData);
     } else if (fileElement.current?.files?.length) {
       fileData = fileElement.current.files[0];
     }
-
-    if (fileData) {
-      if (fileData.size >= 200 * 1024 * 1024) {
-        alert("不可超過200mb");
-        return;
-      }
-
-      setFilename(fileData.name);
-      setSignFileName(fileData.name);
-
-      setIsFileExist(true);
-      setStep(2);
-    } else {
-      setStep(1);
-      setIsFileExist(false);
+  
+    if (!fileData) {
+      // 使用者沒有選檔案，什麼都不做，保留原檔
+      return;
     }
+  
+    if (fileData.size >= 200 * 1024 * 1024) {
+      alert("不可超過200mb");
+      return;
+    }
+  
+    setFileInfo(fileData);
+    setFilename(fileData.name);
+    setSignFileName(fileData.name);
+    setIsFileExist(true);
+    setStep(2);
   };
 
   const nextStep = () => {
@@ -112,11 +110,11 @@ const FileUpload = () => {
     }
   };
 
-  const saveDraft = () => {
-    // Uncommented to fix the error
-    // Replace with actual implementation if needed
-    console.log("Draft saved");
-  };
+  // const saveDraft = () => {
+  //   // Uncommented to fix the error
+  //   // Replace with actual implementation if needed
+  //   console.log("Draft saved");
+  // };
 
   const hideConfirmModal = () => {
     setShowConfirmModal(false);
@@ -165,28 +163,17 @@ const FileUpload = () => {
               <div className="break-all text-black">
                 {isFileExist ? filename : ""}
               </div>
-              {!isFileExist && (
-                <label className="mb-2 upload mt-1">
-                  <input
-                    className="form-control hidden"
-                    type="file"
-                    ref={fileElement}
-                    accept="application/pdf"
-                    onChange={(e) => uploadFile(e.target.files || undefined)}
-                  />
-                </label>
-              )}
-              {isFileExist && (
-                <label className="mb-2 reupload mt-1">
-                  <input
-                    className="form-control hidden"
-                    type="file"
-                    ref={fileElement}
-                    accept="application/pdf"
-                    onChange={(e) => uploadFile(e.target.files || undefined)}
-                  />
-                </label>
-              )}
+              {/* {!isFileExist && ( */}
+              <label className="mb-2 mt-1 upload">
+                {!isFileExist ? '上傳檔案' : '重新上傳'}
+                <input
+                  className="form-control hidden"
+                  type="file"
+                  ref={fileElement}
+                  accept="application/pdf"
+                  onChange={(e) => uploadFile(e.target.files)}
+                />
+              </label>
               {!isFileExist && (
                 <div>
                   <div className="mb-2 font-bold text-black">

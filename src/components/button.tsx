@@ -5,18 +5,18 @@ interface ButtonProps {
   textPosition: string;
   otherClass: string;
   children: React.ReactNode;
-  applyFn: () => void;
+  applyFn: () => void
 }
 
 const Button = ({ buttonText, textPosition, otherClass, children, applyFn }: ButtonProps) => {
   return (
     <div 
-      className="btn flex items-center cursor-pointer relative rounded"
+      className={`btn flex items-center cursor-pointer relative rounded ${otherClass}`}
       onClick={applyFn}
     >
       <div className="flex justify-center items-center px-4 py-3">
         <div className="slot-image">{children}</div>
-        <a className={`block ${textPosition} ${otherClass}`}>{buttonText}</a>
+        <a className={`block ${textPosition}`}>{buttonText}</a>
       </div>
     </div>
   );
