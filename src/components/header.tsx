@@ -10,42 +10,20 @@ import tabText from "../assets/images/Tab_text.png";
 
 interface Props {
   pageStatus: string,
-  nextStep: string,
-  fileId: string,
+  nextStep: () => void,
+  fileId: string | null,
   addSignInventory: () => void,
   addTimeStamp: () => void,
-  addText: () => void
+  addText: () => void,
+  saveDraft: () => void
 }
 
 const Header = (props: Props) => {
   const navigate = useNavigate();
-  const { pageStatus, nextStep, fileId, addSignInventory, addTimeStamp, addText } = props;
-  const [headerStatus, setHeaderStatus] = useState<string>("fileUpload");
-  const [fileReview, setFileReview] = useState<boolean>(false);
+  const { pageStatus, nextStep, fileId, addSignInventory, addTimeStamp, addText, saveDraft } = props;
   const [tooltipText] = useState<string>(
     '<ol class="text-left"><li>1.檔案儲存草稿後可再更換檔案及檔名</li><li>2.需更換檔案才可以更改「簽名擋」</li></ol>'
   );
-
-  useEffect(() => {
-    const handleHeaderStatus = (v: string) => setHeaderStatus(v);
-    const handleFileReview = (v: boolean) => setFileReview(v);
-
-    // bus.on("headerStatus", handleHeaderStatus);
-    // bus.on("fileReview", handleFileReview);
-
-    // return () => {
-    //   bus.off("headerStatus", handleHeaderStatus);
-    //   bus.off("fileReview", handleFileReview);
-    // };
-  }, []);
-
-  const prevPage = () => {
-    // Emit prevPage event
-  };
-
-  const saveDraft = () => {
-    // Emit saveDraft event
-  };
 
   const previousPath = () => {
     if (pageStatus === "fileUpload") {
@@ -117,6 +95,20 @@ const Header = (props: Props) => {
                   />
                 </Button>
               </TooltipLink> */}
+              <Button
+                buttonText="Draft"
+                textPosition="mr-6"
+                otherClass={`max-[560px]:m-0 mr-3 ${
+                  pageStatus !== 'fileUpload' ? "" : "hidden"
+                }`}
+                applyFn={saveDraft}
+              >
+                <img
+                  className='right-4 top-2 absolute'
+                  src="../../src/assets/images/icon_arrows_right_n.svg"
+                  alt="Draft"
+                />
+              </Button>
             </div>
             <Button
               buttonText={pageStatus !== 'fileUpload' ? "Save" : "Next"}

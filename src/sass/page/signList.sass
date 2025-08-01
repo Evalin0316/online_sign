@@ -1,3 +1,5 @@
+$main_color: #be8e55
+
 .container_outer
   .container_home
     width: 100%
@@ -172,21 +174,30 @@
     100%
       transform: scaleY(1)
 
-$main_color: #be8e55
+// .upload
+//   background-image: url("../assets/images/Option.png")
+//   height: 40px
+//   width: 100px
+//   background-repeat: no-repeat
+//   cursor: pointer
 
 .upload
-  background-image: url("../assets/images/Option.png")
+  // background-image: url("../assets/images/reupload.png")
   height: 40px
   width: 100px
   background-repeat: no-repeat
   cursor: pointer
-
-.reupload
-  background-image: url("../assets/images/reupload.png")
-  height: 40px
-  width: 100px
-  background-repeat: no-repeat
-  cursor: pointer
+  border: 1px solid $main_color
+  border-radius: 5px
+  display: flex
+  justify-content: center
+  align-items: center
+  color: $main_color
+  font-size: 14px
+  font-weight: 700
+  &:hover
+    background: $main_color
+    color: #FFFFFF
 
 .file_name_input
   color: $main_color
